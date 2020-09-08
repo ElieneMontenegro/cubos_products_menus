@@ -29,8 +29,8 @@ menuRouter.put('/', async (request, response) => {
     }
 
     menu.name = request.body.name;
-    menu.openedAt = request.body.openedAt;
-    menu.closedAt = request.body.closedAt;
+    // menu.openedAt = new Date();
+    // menu.closedAt = new Date();
 
     await menuRepository.save(menu);
 
@@ -40,16 +40,19 @@ menuRouter.put('/', async (request, response) => {
   }
 });
 
-menuRouter.delete('/', async (request, response) => {
+menuRouter.delete('/:menuId', async (request, response) => {
   try {
     const menuRepository = getCustomRepository(MenuRepository);
 
-    let menuToRemove = await menuRepository.findOne(request.body.id);
+    console.log(request.body, request.params)
+
+    let menuToRemove = await menuRepository.findOne(request.params.menuId);
+    console.log(menuToRemove);
     if (!menuToRemove) {
       throw new Error("Menu doesn't exist");
     }
 
-    await menuRepository.remove(menuToRemove);
+    await menuRepository.delete(menuToRemove);
 
     return response
       .status(201)
