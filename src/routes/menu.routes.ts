@@ -13,7 +13,7 @@ menuRouter.post('/', async (request, response) => {
 
     const createdMenu = await menuService.execute();
 
-    return response.status(201).json({ menu: createdMenu });
+    return response.status(200).json({ menu: createdMenu });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
@@ -34,7 +34,7 @@ menuRouter.put('/', async (request, response) => {
 
     await menuRepository.save(menu);
 
-    return response.status(201).json({ menu: menu });
+    return response.status(200).json({ message:"menu modified", menu: menu });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
@@ -52,7 +52,7 @@ menuRouter.delete('/:menuId', async (request, response) => {
     await menuRepository.delete(menuToRemove);
 
     return response
-      .status(201)
+      .status(200)
       .json({ message: 'Menu deleted', menu: menuToRemove });
   } catch (err) {
     return response.status(400).json({ error: err.message });
@@ -65,7 +65,7 @@ menuRouter.get('/', async (request, response) => {
 
     const menus = await menuRepository.find();
 
-    return response.status(201).json({ message: 'All menus', menus: menus });
+    return response.status(200).json({ message: 'All menus', menus: menus });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
