@@ -44,10 +44,7 @@ menuRouter.delete('/:menuId', async (request, response) => {
   try {
     const menuRepository = getCustomRepository(MenuRepository);
 
-    console.log(request.body, request.params)
-
     let menuToRemove = await menuRepository.findOne(request.params.menuId);
-    console.log(menuToRemove);
     if (!menuToRemove) {
       throw new Error("Menu doesn't exist");
     }

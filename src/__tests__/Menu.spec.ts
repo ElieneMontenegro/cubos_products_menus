@@ -5,12 +5,10 @@ import { MenuRepository } from '../repositories/MenuRepository';
 import { response } from 'express';
 
 describe('Menu', () => {
-  it.only('should create a valid menu', async () => {
+  it('should create a valid menu', async () => {
     const response = await request(app).post('/menus').send({
       name: 'Menuzinho'
     });
-
-    //console.log(response.body.menu);
 
     expect(isUuid(response.body.menu.id)).toBe(true);
   });
@@ -20,26 +18,20 @@ describe('Menu', () => {
 
     const id = response.body.menus[0].id;
 
-    request(app).put('/menus?menuId=${uuid}').send({
+    await request(app).put('/menus?menuId=${uuid}').send({
       name: 'Novo nome'
     })
-
-    console.log(response.body.menus)
    
     expect(response.status).toBe(201);
 
   });
 
-  it.only('should delete an existing menu', async () => {
+  it('should delete an existing menu', async () => {
     const response = await request(app).get('/menus');
 
     const id = response.body.menus[0].id;
-    //console.log(id)
 
-    request(app).del(`/menus/${id}`)
-    const response1 = await request(app).get('/menus');
-
-    //console.log(response1.body.menus)
+    await request(app).delete(`/menus/${id}`).send({});
 
     expect(response.status).toBe(201);
 
@@ -47,14 +39,29 @@ describe('Menu', () => {
 
   it('should show all menus created', async () => {
     const response = await request(app).get('/menus');
-    console.log(response.body.menus)
+
     expect(response.status).toBe(201);
 
   })
 
   
-
-
-
 });
+
+describe('Produto', () => {
+  it('Should create a new product', async () => {
+      const response = await request(app).post('/products').send({
+          name: 'Burger big boy',
+          value: '35',
+          description: 'burgerzao bom dms da conta',
+          menu: 'lilas'
+
+      })
+
+      const response1 = await request(app).get('/products');
+
+      console.log(response1.body)
+
+      expect(response.status).toBe(201);
+  })
+})
 
