@@ -19,41 +19,39 @@ menuRouter.post('/', async (request, response) => {
   }
 });
 
-menuRouter.put('/', async (request, response) => {
+menuRouter.put('/:id', async (request, response) => {
   try {
-    const menuRepository = getCustomRepository(MenuRepository);
+    const menuToChange = await getCustomRepository(MenuRepository).update(request.params.id, {
+      name: request.body.name,
+      openedAt: request.body.openedAt,
+      closedAt: request.body.closedAt
+    });
 
-    let menu = await menuRepository.findOne(request.body.id);
-    if (!menu) {
+    if (!menuToChange.affected) {
       throw new Error("Menu doesn't exist");
     }
 
-    menu.name = request.body.name;
-    // menu.openedAt = new Date();
-    // menu.closedAt = new Date();
+    const menuChanged = await getCustomRepository(MenuRepository).findOne(request.params.id)
 
-    await menuRepository.save(menu);
-
-    return response.status(200).json({ message:"menu modified", menu: menu });
+    return response.status(200).json({ message:"menu modified", menu: menuChanged });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
 });
 
-menuRouter.delete('/:menuId', async (request, response) => {
+menuRouter.delete('/:id', async (request, response) => {
   try {
-    const menuRepository = getCustomRepository(MenuRepository);
+    const menuToRemove = await getCustomRepository(MenuRepository).delete(request.params.id);
 
-    let menuToRemove = await menuRepository.findOne(request.params.menuId);
-    if (!menuToRemove) {
+    if (!menuToRemove.affected) {
       throw new Error("Menu doesn't exist");
     }
 
-    await menuRepository.delete(menuToRemove);
+    const menuDeleted = await getCustomRepository(MenuRepository).findOne(request.params.id)
 
     return response
       .status(200)
-      .json({ message: 'Menu deleted', menu: menuToRemove });
+      .json({ message: 'Menu deleted', menu: menuDeleted });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
@@ -61,11 +59,23 @@ menuRouter.delete('/:menuId', async (request, response) => {
 
 menuRouter.get('/', async (request, response) => {
   try {
-    const menuRepository = getCustomRepository(MenuRepository);
+    const menus = await getCustomRepository(MenuRepository).find();
 
-    const menus = await menuRepository.find();
+    let isOpen: boolean;
+    const menuToPrint = menus.map(item => {
 
-    return response.status(200).json({ message: 'All menus', menus: menus });
+      const today = new Date();
+      if(item.closedAt.getTime() <= today.getTime()) {
+        isOpen = false;
+      } else {
+        isOpen = true;
+      }
+
+      return({...item, isOpen})
+      
+    });
+
+    return response.status(200).json({ message: 'All menus', menus: menuToPrint });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
