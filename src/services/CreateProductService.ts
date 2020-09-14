@@ -17,7 +17,7 @@ class CreateProductService {
       name: this.forCreateProduct.name,
       value: this.forCreateProduct.value,
       description: this.forCreateProduct.description,
-      menu: this.forCreateProduct.menu
+      menu: this.forCreateProduct.menus
 
     });
 
