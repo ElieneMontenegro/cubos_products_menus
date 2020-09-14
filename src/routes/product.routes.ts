@@ -32,7 +32,7 @@ productRouter.put('/:productId', async (request, response) => {
     product.name = request.body.name;
     product.description = request.body.description;
     product.value=request.body.vale;
-    product.menu = request.body.menu;
+    product.menus = request.body.menu;
 
     await productRepository.save(product)
 
@@ -66,6 +66,14 @@ productRouter.get('/', async (request, response) => {
     const productRepository = getCustomRepository(ProductRepository);
 
     const products = await productRepository.find();
+
+    // const productsWithMenus = await productRepository.find({relations:["products_menu_menus"]} );
+    const productsWithMenus = await productRepository.getProductWithMenus();
+
+
+    console.log(productsWithMenus);
+
+    console.log(products[0].menus)
 
     return response.status(200).json({ message:"All products", product: products });
   } catch (err) {

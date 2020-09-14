@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Product } from '../models/Product'
 
 @Entity({ name: 'menus' })
 export class Menu {
@@ -13,5 +14,9 @@ export class Menu {
 
   @Column()
   closedAt!: Date;
+
+  @ManyToMany(type => Product)
+  @JoinTable({name: "products_menu_menus"})
+  products!: Product[];
 
 }

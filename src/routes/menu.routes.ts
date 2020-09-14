@@ -59,19 +59,18 @@ menuRouter.delete('/:id', async (request, response) => {
 
 menuRouter.get('/', async (request, response) => {
   try {
-    const menus = await getCustomRepository(MenuRepository).find();
-
+    const menus = await getCustomRepository(MenuRepository);
+    const allMenus = await menus.find();
+    const menuzinhos = await menus.getMenuByPeriods();
+    
+    let cont = -1;
     let isOpen: boolean;
-    const menuToPrint = menus.map(item => {
+    const menuToPrint = allMenus.map(item => {
 
-      const today = new Date();
-      if(item.closedAt.getTime() <= today.getTime()) {
-        isOpen = false;
-      } else {
-        isOpen = true;
-      }
+      cont++;
+      isOpen = menuzinhos[cont].isOpened;
 
-      return({...item, isOpen})
+      return({...item, isOpen })
       
     });
 

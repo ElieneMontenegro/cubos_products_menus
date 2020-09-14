@@ -25,6 +25,6 @@ export class Product {
   description!: string;
 
   @ManyToMany(type => Menu)
-  @JoinTable()
-  menu!: Menu[];
+  @JoinTable({name: "products_menu_menus"})
+  menus!: Menu[];
 }
