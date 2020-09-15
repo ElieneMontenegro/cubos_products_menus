@@ -2,6 +2,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Product } from '../models/Product';
 
 interface IProductMenu {
+  productId: string;
   productName: string;
   description: string;
   value: number;
@@ -16,18 +17,21 @@ interface IProductMenu {
 export class ProductRepository extends Repository<Product> {
   
   public async getProductWithMenus(): Promise<IProductMenu[]> {
-    
-    const allProducts = await this.createQueryBuilder("allProducts").getMany();
+     const allProducts = await this.createQueryBuilder("allProducts").getMany();
+    const productsWithMenus = await this.find({relations:["menus"]} );
 
-    const Products: IProductMenu[] = allProducts.map(item => {
-
-      console.log(item.menus)
+    const Products: IProductMenu[] = productsWithMenus?.map(item => {
+     
+      const vetor = item.menus.map(item => {
+        return({id: item.id, name: item.name})
+      })
 
       return {
-        productName: item.name,
+        productId: item.id,
+        productName: item.name, 
         description: item.description,
         value: item.value,
-        menus: item.menus
+        menus: vetor
       }
     })
   

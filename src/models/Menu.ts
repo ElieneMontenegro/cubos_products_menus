@@ -15,8 +15,6 @@ export class Menu {
   @Column()
   closedAt!: Date;
 
-  @ManyToMany(type => Product)
-  @JoinTable({name: "products_menu_menus"})
+  @ManyToMany(type => Product, product => product.menus)
   products!: Product[];
-
 }

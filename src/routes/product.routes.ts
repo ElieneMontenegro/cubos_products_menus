@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getCustomRepository } from 'typeorm';
+import { getCustomRepository, createQueryBuilder } from 'typeorm';
 
 import { ProductRepository } from '../repositories/ProductRepository';
 import CreateProductService from '../services/CreateProductService';
@@ -14,47 +14,42 @@ productRouter.post('/', async (request, response) => {
     const createdProduct = await productService.execute();
 
     return response.status(200).json({ product: createdProduct });
-
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
 });
 
-productRouter.put('/:productId', async (request, response) => {
+productRouter.put('/:id', async (request, response) => {
   try {
-    const productRepository = getCustomRepository(ProductRepository);
+    const productToChange = await getCustomRepository(ProductRepository).update(request.params.id, {
+      name: request.body.name,
+      description: request.body.description,
+      value: request.body.value
+    })
 
-    let product = await productRepository.findOne(request.params.productId);
-    if(!product){
+    if(!productToChange.affected){
       throw new Error("Product doesn't exist")
     }
 
-    product.name = request.body.name;
-    product.description = request.body.description;
-    product.value=request.body.vale;
-    product.menus = request.body.menu;
+    const productChanged = await getCustomRepository(ProductRepository).findOne(request.params.id)
 
-    await productRepository.save(product)
-
-    return response.status(200).json({ message:"Product modified", product: product });
-
+    return response.status(200).json({ message:"Product modified", product: productChanged });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
 });
 
-productRouter.delete('/:productId', async (request, response) => {
+productRouter.delete('/:id', async (request, response) => {
   try {
-    const productRepository = getCustomRepository(ProductRepository);
+    const productToRemove = await getCustomRepository(ProductRepository).delete(request.params.id);
 
-    const productToRemove = await productRepository.findOne(request.params.productId);
-    if(!productToRemove){
+    if(!productToRemove.affected){
       throw new Error("Menu doesn't exist")
     }
 
-    await productRepository.remove(productToRemove);
+    const productChanged = await getCustomRepository(ProductRepository).findOne(request.params.id)
 
-    return response.status(200).json({ message:"Product deleted", product: productToRemove });
+   return response.status(200).json({ message:"Product deleted"});
     
   } catch (err) {
     return response.status(400).json({ error: err.message });
@@ -63,19 +58,11 @@ productRouter.delete('/:productId', async (request, response) => {
 
 productRouter.get('/', async (request, response) => {
   try {
-    const productRepository = getCustomRepository(ProductRepository);
+    const repo = await getCustomRepository(ProductRepository)
 
-    const products = await productRepository.find();
+    const productsWithMenus = await repo.getProductWithMenus();
 
-    // const productsWithMenus = await productRepository.find({relations:["products_menu_menus"]} );
-    const productsWithMenus = await productRepository.getProductWithMenus();
-
-
-    console.log(productsWithMenus);
-
-    console.log(products[0].menus)
-
-    return response.status(200).json({ message:"All products", product: products });
+    return response.status(200).json({ message:"All products", product: productsWithMenus });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }

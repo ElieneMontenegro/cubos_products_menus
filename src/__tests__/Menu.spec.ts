@@ -2,11 +2,10 @@ import request from 'supertest';
 import { isUuid, uuid } from 'uuidv4';
 import app from '../app';
 import { MenuRepository } from '../repositories/MenuRepository';
-import { ProductRepository } from '../repositories/ProductRepository';
 import { response } from 'express';
 
 describe('Menu', () => {
-  it.only('should create a valid menu', async () => {
+  it('should create a valid menu', async () => {
     const response = await request(app).post('/menus').send({
       name: 'Menuzinho'
     });
@@ -14,7 +13,7 @@ describe('Menu', () => {
     expect(isUuid(response.body.menu.id)).toBe(true);
   });
 
-  it.only('should update an existing menu', async () => {
+  it('should update an existing menu', async () => {
     const response = await request(app).get('/menus');
 
     const id = response.body.menus[0].id;
@@ -29,7 +28,7 @@ describe('Menu', () => {
 
   });
 
-  it.only('should delete an existing menu', async () => {
+  it('should delete an existing menu', async () => {
     const response = await request(app).get('/menus');
 
     const id = response.body.menus[0].id;
@@ -40,7 +39,7 @@ describe('Menu', () => {
 
   });
 
-  it.only('should show all menus created', async () => {
+  it('should show all menus created', async () => {
     const response = await request(app).get('/menus');
 
     expect(response.status).toBe(200);

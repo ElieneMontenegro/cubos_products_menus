@@ -16,8 +16,7 @@ class CreateProductService {
       id: uuid(),
       name: this.forCreateProduct.name,
       value: this.forCreateProduct.value,
-      description: this.forCreateProduct.description,
-      menu: this.forCreateProduct.menus
+      description: this.forCreateProduct.description
 
     });
 
