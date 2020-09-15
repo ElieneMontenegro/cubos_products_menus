@@ -4,9 +4,16 @@ import app from '../app';
 import { ProductRepository } from '../repositories/ProductRepository';
 import { response } from 'express';
 
-describe('Produto', () => {
+describe('ProdutosMenus', () => {
+  it('should create a valid menu', async () => {
+    const response = await request(app).post('/menus').send({
+      name: 'Menuzinho'
+    });
+
+    expect(isUuid(response.body.menu.id)).toBe(true);
+  });
+
   it('Should create a new product', async () => {
-    
     const response = await request(app).post('/products').send({
       name: "Burger big boy",
       value: 35,
@@ -16,26 +23,34 @@ describe('Produto', () => {
     expect(response.status).toBe(200);
   })
 
-  it('Should update an existing product', async () =>{
-    const response = await request(app).get('/products')
+  it('Should create a new relationship product menu', async () => {
+    const product = await request(app).get('/products');
+    const menu = await request(app).get('/menus');
 
-    const id = response.body.product[0].productId;
-    const update = await request(app).put(`/products/${id}`).send({
-      name: "Burger little boy",
-      value: 35,
-      description: "burgerzao bom dms da conta"
+    const relation = await request(app).post('/menus-products').send({
+      productId: product.body.product[0].productId,
+      menuId: menu.body.menus[0].id
     })
 
-    expect(update.status).toBe(200);
+    expect(relation.status).toBe(200);
   })
 
-  it('Should delete an existing product', async() => {
+  it('Should show all existing products', async() =>{
     const response = await request(app).get('/products')
 
-    const id = response.body.product[0].productId
-    const productTODelete = await request(app).delete(`/products/${id}`).send({});
+    expect(response.status).toBe(200);
+  })
 
-    expect(productTODelete.status).toBe(200);
+  it('Should delete an existing relationship', async() => {
+    const product = await request(app).get('/products');
+    const menu = await request(app).get('/menus');
+
+    const deleteRelation = await request(app).delete('/menus-products').send({
+      productId: product.body.product[0].productId,
+      menuId: menu.body.menus[0].id
+    })
+
+    expect(deleteRelation.status).toBe(200);
   })
 
   it('Should show all existing products', async() =>{
