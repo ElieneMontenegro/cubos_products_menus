@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getCustomRepository, createQueryBuilder } from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 
 import { ProductRepository } from '../repositories/ProductRepository';
 import CreateProductService from '../services/CreateProductService';
@@ -13,7 +13,7 @@ productRouter.post('/', async (request, response) => {
 
     const createdProduct = await productService.execute();
 
-    return response.status(200).json({ product: createdProduct });
+    return response.status(201).json({ product: createdProduct });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
@@ -47,8 +47,6 @@ productRouter.delete('/:id', async (request, response) => {
       throw new Error("Menu doesn't exist")
     }
 
-    const productChanged = await getCustomRepository(ProductRepository).findOne(request.params.id)
-
    return response.status(200).json({ message:"Product deleted"});
     
   } catch (err) {
@@ -58,7 +56,7 @@ productRouter.delete('/:id', async (request, response) => {
 
 productRouter.get('/', async (request, response) => {
   try {
-    const repo = await getCustomRepository(ProductRepository)
+    const repo = getCustomRepository(ProductRepository)
 
     const productsWithMenus = await repo.getProductWithMenus();
 

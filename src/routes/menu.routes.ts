@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getCustomRepository, getRepository } from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 
 import { MenuRepository } from '../repositories/MenuRepository';
 import CreateMenuService from '../services/CreateMenuService';
@@ -8,12 +8,13 @@ const menuRouter = Router();
 
 menuRouter.post('/', async (request, response) => {
   try {
+
     const menuRepository = getCustomRepository(MenuRepository);
     const menuService = new CreateMenuService(menuRepository, request.body);
 
     const createdMenu = await menuService.execute();
 
-    return response.status(200).json({ menu: createdMenu });
+    return response.status(201).json({ menu: createdMenu });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
@@ -47,11 +48,9 @@ menuRouter.delete('/:id', async (request, response) => {
       throw new Error("Menu doesn't exist");
     }
 
-    const menuDeleted = await getCustomRepository(MenuRepository).findOne(request.params.id)
-
     return response
       .status(200)
-      .json({ message: 'Menu deleted', menu: menuDeleted });
+      .json({ message: 'Menu deleted' });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }

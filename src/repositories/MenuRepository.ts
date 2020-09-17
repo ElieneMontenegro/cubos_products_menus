@@ -1,7 +1,5 @@
-import { EntityRepository, Repository, getCustomRepository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Menu } from '../models/Menu';
-import { response } from 'express';
-import { networkInterfaces } from 'os';
 
 interface IReportMenu {
   name: string;

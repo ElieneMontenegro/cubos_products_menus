@@ -22,7 +22,7 @@ menuProductRouter.post('/', async (request, response) => {
     .values({productsId: request.body.productId, menusId: request.body.menuId })
     .execute() 
     
-    return response.status(200).json({ message: "adicionando na tabela de produtos e menus" })
+    return response.status(201).json({ message: "produto adicionado ao menu" })
 
   } catch (err) {
     return response.status(400).json({ error: err.message });

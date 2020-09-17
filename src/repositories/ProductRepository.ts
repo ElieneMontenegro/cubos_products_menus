@@ -17,12 +17,12 @@ interface IProductMenu {
 export class ProductRepository extends Repository<Product> {
   
   public async getProductWithMenus(): Promise<IProductMenu[]> {
-     const allProducts = await this.createQueryBuilder("allProducts").getMany();
+
     const productsWithMenus = await this.find({relations:["menus"]} );
 
-    const Products: IProductMenu[] = productsWithMenus?.map(item => {
+    const Products: IProductMenu[] = productsWithMenus.map(item => {
      
-      const vetor = item.menus.map(item => {
+      const menus = item.menus.map(item => {
         return({id: item.id, name: item.name})
       })
 
@@ -31,7 +31,7 @@ export class ProductRepository extends Repository<Product> {
         productName: item.name, 
         description: item.description,
         value: item.value,
-        menus: vetor
+        menus: menus
       }
     })
   
