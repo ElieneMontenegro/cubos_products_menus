@@ -25,6 +25,6 @@ export class Product {
   description!: string;
 
   @ManyToMany(type => Menu, menu => menu.products, { cascade: true })
-  @JoinTable({name: "products_menu_menus"})
+  @JoinTable({ name: 'products_menu_menus' })
   menus!: Menu[];
 }

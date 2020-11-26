@@ -1,8 +1,42 @@
 import request from 'supertest';
 import { isUuid } from 'uuidv4';
 import app from '../app';
+import { MenuRepository } from '../repositories/MenuRepository';
+import { Menu } from '../models/Menu';
+
+describe('Create Menu', () => {
+  it('should have a valid name', async() => {
+    const response = await request(app).post('/menus').send({
+      name: 'Menuzinho'
+    });
+
+    expect(isUuid(response.body.menu.id)).toBe(true); 
+  })
+
+  it('shouldnt accept null values', async() => {
+    const response = await request(app).post('/menus').send({
+      name: null
+    });
+
+    expect(response.body.error).toBe("Can't create menu without a name")
+  })
+
+  it('shouldnt accept non string values', async() => {
+    const response = await request(app).post('/menus').send({
+      name: 24
+    });
+
+    console.log(response.body)
+
+    expect(typeof response.body.menu.name).toBe("string")
+
+  })
+
+})
 
 describe('Menu', () => {
+
+
   it('should create a valid menu', async () => {
     const response = await request(app).post('/menus').send({
       name: 'Menuzinho'

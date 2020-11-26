@@ -4,7 +4,7 @@
   "port": 5488,
   "username": "postgres",
   "password": "postgres",
-  "database": "menus",
+  "database": "test",
   "synchronize": true,
   "logging": false,
   "entities": ["src/models/**/*.ts"],

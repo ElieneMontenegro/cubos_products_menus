@@ -3,6 +3,7 @@ import { getCustomRepository } from 'typeorm';
 
 import { MenuRepository } from '../repositories/MenuRepository';
 import CreateMenuService from '../services/CreateMenuService';
+import { EROFS } from 'constants';
 
 const menuRouter = Router();
 
@@ -10,6 +11,9 @@ menuRouter.post('/', async (request, response) => {
   try {
 
     const menuRepository = getCustomRepository(MenuRepository);
+    if(request.body.name == null){
+      throw new Error("Can't create menu without a name")
+    }
     const menuService = new CreateMenuService(menuRepository, request.body);
 
     const createdMenu = await menuService.execute();

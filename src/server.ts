@@ -6,7 +6,7 @@ getConnectionOptions()
   .then(async options => {
     return createConnection({
       ...options,
-      migrationsRun: true,
+      migrationsRun: false,
     });
   })
   .then(() => {
